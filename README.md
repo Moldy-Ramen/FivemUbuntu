@@ -148,14 +148,18 @@ You can use `screen` or configure a Linux service to run your server.
    sudo nano fivem.service
    ```
 
-2. Add the following content:
+2. Add the following content and replace user with your linux username:
    ```bash
+   [Unit]
+   Description=FiveM Server Service
+
    [Service]
-   ExecStart=/home/<username>/FXServer/server/run.sh
+   Type=simple
+   ExecStart=/home/as1ch/FXServer/server/run.sh
    Restart=always
-   User=<username>
-   Group=<groupname>
-   WorkingDirectory=/home/<username>/FXServer/server
+
+   [Install]
+   WantedBy=default.target
    ```
 
 3. Enable and start the service:
