@@ -54,7 +54,7 @@ If you're already familiar with VM setup, you can skip this section.
 
 ### Connect to Your Server
 1. Use an SSH client (e.g., [PuTTY](https://www.putty.org/)) to connect to your server:  
-   - Enter the server’s IP address.  
+   - Enter the server’s IP address in the Host Name Box and click Open.  
    - Log in with the username and password created during setup.
 
 2. Update server packages:
