@@ -135,7 +135,7 @@ You can use `screen` or configure a Linux service to run your server.
 
 ## Configuring txAdmin
 1. Access txAdmin by visiting your server’s IP and port (e.g., `10.0.0.231:40120`).  
-2. Link your cfx.re account and complete the setup:
+2. Link your cfx.re account with the pin in your ssh terminal and complete the setup:
    - Enter a backup password.
    - Configure your server name, recipe, and database options.
 
