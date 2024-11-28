@@ -104,7 +104,7 @@ If you're already familiar with VM setup, you can skip this section.
    cd ~/FXServer/server
    ```
 
-2. Download and extract the latest FiveM server files:
+2. Download and extract the latest FiveM server files [FiveM Linux Artifacts](https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/):
    ```bash
    wget <FiveM_Server_Download_Link>
    tar xf fx.tar.xz
