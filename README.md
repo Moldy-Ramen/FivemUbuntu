@@ -1,99 +1,169 @@
 
-# FivemDebian  
-**Custom FiveM Debian Installation Guide**
+# FiveM Debian Installation Guide
 
-## VM Installation Guide  
-*If you already know how to install and launch a virtual machine (VM), skip this section.*  
+This guide provides step-by-step instructions for installing and configuring a custom FiveM server on a Debian-based system, using an Ubuntu virtual machine (VM).
 
-### Getting Started  
-### Requirements:  
+---
+
+## Table of Contents
+
+1. [VM Installation Guide](#vm-installation-guide)  
+2. [Ubuntu Installation Guide](#ubuntu-installation-guide)  
+3. [FiveM Setup and Configuration](#fivem-setup-and-configuration)  
+4. [Starting Your Server](#starting-your-server)  
+5. [Configuring txAdmin](#configuring-txadmin)  
+6. [Optional: Configuring Linux Service](#optional-configuring-linux-service)
+
+---
+
+## VM Installation Guide
+
+If you're already familiar with VM setup, you can skip this section.
+
+### Getting Started
+#### Prerequisites
 1. **Ubuntu Server ISO File**  
-   - Download the ISO file [here](https://ubuntu.com/download/server).  
+   Download the ISO file from [Ubuntu Server](https://ubuntu.com/download/server).  
 
 2. **Virtualization Software**  
-   - Choose one of the following options:  
-     - [VMWare Installation Guide](https://www.youtube.com/watch?v=PoNPBdKLZdk)  
-     - [Hyper-V Installation Guide](https://www.youtube.com/watch?v=FCIA4YQHx9U)  
-     - [VirtualBox Installation Guide](https://www.youtube.com/watch?v=8mns5yqMfZk)  
+   Choose any of the following:  
+   - [VMware](https://www.youtube.com/watch?v=PoNPBdKLZdk)  
+   - [Hyper-V](https://www.youtube.com/watch?v=FCIA4YQHx9U)  
+   - [VirtualBox](https://www.youtube.com/watch?v=8mns5yqMfZk)  
 
-3. **VM Instance**  
-   - Use one of the guides above to create a VM instance with the Ubuntu ISO.  
-   - *Note: Detailed instructions for creating a VM instance are omitted due to the quality of the provided guides.*  
-
----
-
-## Ubuntu Installation Guide  
-
-1. **Select Language**  
-   - Use the arrow keys to choose a language and press `Enter`.  
-
-2. **Update Installer**  
-   - Select **Update the Installer**, then wait for the update to complete.  
-
-3. **Choose Keyboard Layout**  
-   - Select your desired keyboard layout.  
-
-4. **Configure Network**  
-   - Do not change any settings. Make a note of your machine’s IP address; you’ll need it later.  
-
-5. **Skip Proxy Configuration**  
-   - Ensure **Done** is selected, then press `Enter`.  
-
-6. **Configure Ubuntu Mirror**  
-   - If in the US, select **Done** to keep the default.  
-   - For other regions, find a local Ubuntu mirror from [here](https://launchpad.net/ubuntu/+archivemirrors) and update accordingly.  
-
-7. **Configure Storage**  
-   - Use the entire disk by selecting **Done**, or choose a custom layout to create your own partitions.  
-
-8. **Partition Summary**  
-   - Review the partitions and select **Done**.  
-
-9. **Confirm Destructive Action**  
-   - Select **Continue** to partition the disk and begin the installation.  
-
-10. **Configure Profile**  
-    - Complete the form with your name, preferred server name, and user account settings (username and password).  
-
-11. **Configure SSH**  
-    - Select **OpenSSH**.  
-    - *Optional:* For production servers, importing an SSH key is recommended for additional security.  
-
-12. **Skip Featured Server Snaps**  
-    - Select **Done** to proceed without additional packages.  
-
-13. **Reboot**  
-    - Ubuntu will install, and upon completion, reboot the system.  
+3. **Create a VM Instance**  
+   Use one of the guides above to create a VM instance with the Ubuntu ISO.
 
 ---
 
-## FiveM Setup with Auto Updates  
+## Ubuntu Installation Guide
+1. Select your language and keyboard layout.
+2. Update the installer.
+3. Configure the network (note the machine’s IP address).
+4. Skip proxy configuration and Ubuntu mirror adjustments (unless outside the US).
+5. Configure storage: use the entire disk unless a custom layout is needed.
+6. Confirm disk partitioning.
+7. Set up a user profile (username and password).
+8. Configure OpenSSH (recommended for production servers).  
+9. Skip installing additional snaps.  
+10. Complete the installation and reboot.
 
-*If you don’t want to configure auto-updates, skip to the regular installation section below.*  
+---
 
-1. **Log in to Your Server**  
-   - Use your preferred SSH client (e.g., PuTTY).  
-   - *Beginner Tip:* Download and install [PuTTY](https://www.putty.org/) for simplicity.  
+## FiveM Setup and Configuration
 
-     Steps to connect:  
-     - Open PuTTY.  
-     - Enter your server's IP address in the **Hostname** field.  
-     - (Optional) Save your server details in the **Saved Sessions** box.  
-     - Press **Open**, accept the SSH fingerprint, and log in with the username and password set during setup.  
+### Connect to Your Server
+1. Use an SSH client (e.g., [PuTTY](https://www.putty.org/)) to connect to your server:  
+   - Enter the server’s IP address.  
+   - Log in with the username and password created during setup.
 
-2. **Update Server Repositories and Software**  
+2. Update server packages:
    ```bash
    sudo apt update && sudo apt upgrade -y
-   ```  
+   ```
 
-3. **Install Git, xz, and Nano**  
+3. Install essential tools:
    ```bash
-   sudo apt install xz git nano -y
-   ```  
-
-4. **Create Directory for Auto-Update Script**  
-   ```bash
-   mkdir autoupdate
-   ```  
+   sudo apt install git nano xz-utils -y
+   ```
 
 ---
+
+### Configure MariaDB
+1. Install MariaDB:
+   ```bash
+   sudo apt install mariadb-server -y
+   ```
+
+2. Secure the installation:
+   ```bash
+   sudo mysql_secure_installation
+   ```
+   - Follow prompts (use secure settings as detailed above).  
+
+3. Create a database user:
+   ```bash
+   sudo mysql
+   create user 'fivem'@'%' identified by 'securepassword';
+   grant all privileges on *.* to 'fivem'@'%';
+   flush privileges;
+   exit;
+   ```
+
+4. Restart MariaDB:
+   ```bash
+   sudo systemctl restart mariadb
+   ```
+
+---
+
+### Install FiveM Server
+1. Create a directory:
+   ```bash
+   mkdir -p ~/FXServer/server
+   cd ~/FXServer/server
+   ```
+
+2. Download and extract the latest FiveM server files:
+   ```bash
+   wget <FiveM_Server_Download_Link>
+   tar xf fx.tar.xz
+   rm fx.tar.xz
+   ```
+
+3. Obtain a server license key from [FiveM Keymaster](https://keymaster.fivem.net/).
+
+---
+
+## Starting Your Server
+You can use `screen` or configure a Linux service to run your server.
+
+### Using `screen`:
+1. Install `screen`:
+   ```bash
+   sudo apt install screen -y
+   ```
+
+2. Run the server:
+   ```bash
+   screen -S fivem
+   cd ~/FXServer/server
+   bash ~/FXServer/server/run.sh
+   ```
+
+---
+
+## Configuring txAdmin
+1. Access txAdmin by visiting your server’s IP and port (e.g., `10.0.0.231:40120`).  
+2. Link your cfx.re account and complete the setup:
+   - Enter a backup password.
+   - Configure your server name, recipe, and database options.
+
+---
+
+## Optional: Configuring Linux Service
+1. Create a service file:
+   ```bash
+   cd /etc/systemd/system
+   sudo nano fivem.service
+   ```
+
+2. Add the following content:
+   ```bash
+   [Service]
+   ExecStart=/home/<username>/FXServer/server/run.sh
+   Restart=always
+   User=<username>
+   Group=<groupname>
+   WorkingDirectory=/home/<username>/FXServer/server
+   ```
+
+3. Enable and start the service:
+   ```bash
+   sudo systemctl enable fivem.service
+   sudo systemctl start fivem.service
+   ```
+
+---
+
+Feel free to let me know if you’d like additional tweaks or help inserting the `<username>` placeholders!
