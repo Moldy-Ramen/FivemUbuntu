@@ -178,6 +178,9 @@ A custom installation guide for setting up a FiveM server on a Debian-based VM.
    ```bash
    sudo systemctl enable fivem.service
    sudo systemctl start fivem.service
+
+   Restart command for service ignore in guide
+   sudo systemctl restart fivem.service
    ```
 
 ---
